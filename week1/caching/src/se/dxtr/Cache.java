@@ -1,7 +1,7 @@
 package se.dxtr;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dexter on 02/09/15.
@@ -10,7 +10,7 @@ public class Cache {
 
     private final int maxSize;
     private final int[] accesses;
-    private final List<Integer> currentCache = new ArrayList<> ();
+    private final Set<Integer> currentCache = new HashSet<> ();
     private int reads = 0;
 
     public Cache (int maxSize, int[] accesses) {
