@@ -41,6 +41,7 @@ public class Main {
                     string1 = mappings1.get (token1);
                 } else if (mappings2.containsKey (token2)) {
                     string1 = mappings2.get (token2);
+                    mappings1.put (token1, string1);
                 } else {
                     string1 = "a";
                 }
@@ -54,6 +55,7 @@ public class Main {
                     string2 = mappings2.get (token2);
                 } else if (mappings1.containsKey (token1)) {
                     string2 = mappings1.get (token1);
+                    mappings2.put (token2, string2);
                 } else {
                     string2 = "a";
                 }

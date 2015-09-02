@@ -1,4 +1,4 @@
-9
+10
 how now brown <animal>
 <foo> now <color> cow
 who are you
@@ -17,3 +17,5 @@ wat <baz> <bar> <foo> <baz>
 <a> <b> <a> <a> lolfi
 <a> <b> <a>
 wat <bar> <foo>
+<a> <c> <c> <a> <a>
+<b> <b> <d> <d> kek
