@@ -12,7 +12,7 @@ public class Main {
         int[] accesses = new int[numAccesses];
         Map<Integer, Queue<Integer>> accessLists = new HashMap<> ();
         for (int i = 0; i < numTypes; i++)
-            accessLists.put (i, new LinkedList<Integer> ());
+            accessLists.put (i, new LinkedList<> ());
         for (int i = 0; i < numAccesses; i++) {
             int object = s.nextInt ();
             accesses[i] = object;
