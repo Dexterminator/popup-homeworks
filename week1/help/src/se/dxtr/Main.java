@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 
 public class Main {
 
+    static Map<String, String> mappings1 = new HashMap<> ();
+    static Map<String, String> mappings2 = new HashMap<> ();
+
     public static void main(String[] args) {
         Scanner s = new Scanner (System.in);
         int n = s.nextInt ();
@@ -28,17 +31,16 @@ public class Main {
         if (tokens1.length != tokens2.length)
             return "-";
 
-        Map<String, String> mappings1 = new HashMap<> ();
-        Map<String, String> mappings2 = new HashMap<> ();
+        mappings1.clear ();
+        mappings2.clear ();
 
-        createExplicitMappings (tokens1, tokens2, mappings1, mappings2);
-        resolveOtherMappings (tokens1, tokens2, mappings1, mappings2);
+        createExplicitMappings (tokens1, tokens2);
+        resolveOtherMappings (tokens1, tokens2);
 
-        return getResult (tokens1, tokens2, mappings1, mappings2);
+        return getResult (tokens1, tokens2);
     }
 
-    private static void createExplicitMappings (String[] tokens1, String[] tokens2, Map<String, String> mappings1,
-                                                Map<String, String> mappings2) {
+    private static void createExplicitMappings (String[] tokens1, String[] tokens2) {
         for (int j = 0; j < tokens1.length; j++) {
             String token1 = tokens1[j];
             String token2 = tokens2[j];
@@ -51,8 +53,7 @@ public class Main {
         }
     }
 
-    private static void resolveOtherMappings (String[] tokens1, String[] tokens2, Map<String, String> mappings1,
-                                              Map<String, String> mappings2) {
+    private static void resolveOtherMappings (String[] tokens1, String[] tokens2) {
         for (int j = 0; j < tokens1.length; j++) {
             String token1 = tokens1[j];
             String token2 = tokens2[j];
@@ -67,8 +68,7 @@ public class Main {
         }
     }
 
-    private static String getResult (String[] tokens1, String[] tokens2, Map<String, String> mappings1,
-                                     Map<String, String> mappings2) {
+    private static String getResult (String[] tokens1, String[] tokens2) {
         String[] result = new String[tokens1.length];
         for (int j = 0; j < tokens1.length; j++) {
             String token1 = tokens1[j];

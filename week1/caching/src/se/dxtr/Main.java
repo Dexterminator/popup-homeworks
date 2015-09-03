@@ -1,6 +1,6 @@
 package se.dxtr;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -10,10 +10,16 @@ public class Main {
         int numTypes = s.nextInt ();
         int numAccesses = s.nextInt ();
         int[] accesses = new int[numAccesses];
-        for (int i = 0; i < numAccesses; i++)
-            accesses[i] = s.nextInt ();
+        Map<Integer, Queue<Integer>> accessLists = new HashMap<> ();
+        for (int i = 0; i < numTypes; i++)
+            accessLists.put (i, new LinkedList<Integer> ());
+        for (int i = 0; i < numAccesses; i++) {
+            int object = s.nextInt ();
+            accesses[i] = object;
+            accessLists.get (object).add (i);
+        }
 
-        Cache cache = new Cache (maxSize, accesses);
+        Cache cache = new Cache (maxSize, accesses, accessLists);
         int reads = cache.calculateLeastReads ();
         System.out.println (reads);
     }
