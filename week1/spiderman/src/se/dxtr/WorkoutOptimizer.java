@@ -16,6 +16,8 @@ public class WorkoutOptimizer {
     }
 
     static String getOptimalWorkout (int[] distances) {
+        if (distances.length == 1)
+            return Path.impossible ().pathString;
         Path path = new Path ("U", distances[0]);
         Path bestPath = findBestPath (path, Direction.UP, 1, distances, distances[0]);
         return bestPath.pathString;
@@ -30,12 +32,13 @@ public class WorkoutOptimizer {
         }
 
         if (currentHeight < 0) {
-            return Path.Impossible ();
+            return Path.impossible ();
         }
 
-        Path updatedPath = new Path (path.pathString + direction.character, Math.max (path.maxHeight, currentHeight));
+        String updatedPathString = path.pathString + direction.character;
+        Path updatedPath = new Path (updatedPathString, Math.max (path.maxHeight, currentHeight));
         if (index == distances.length - 1) {
-            return updatedPath;
+            return currentHeight == 0 ? updatedPath : Path.impossible ();
         }
 
         Path path1 = findBestPath (updatedPath, Direction.UP, index + 1, distances, currentHeight);
@@ -52,7 +55,7 @@ public class WorkoutOptimizer {
             this.maxHeight = maxHeight;
         }
 
-        public static Path Impossible () {
+        public static Path impossible () {
             return new Path ("IMPOSSIBLE", IMPOSSIBLE);
         }
     }
