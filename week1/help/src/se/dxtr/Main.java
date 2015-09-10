@@ -55,19 +55,9 @@ public class Main {
             String token2 = tokens2[j];
 
             if (isPlaceholder (token1) && !isPlaceholder (token2)) {
-                if (mappings1.containsKey (token1)) {
-                    if (!mappings1.get (token1).equals (token2))
-                        return false;
-                } else {
-                    mappings1.put (token1, token2);
-                }
+                mappings1.put (token1, token2);
             } else if (!isPlaceholder (token1) && isPlaceholder (token2)) {
-                if (mappings2.containsKey (token2)) {
-                    if (!mappings2.get (token2).equals (token1))
-                        return false;
-                } else {
-                    mappings2.put (token2, token1);
-                }
+                mappings2.put (token2, token1);
             }
         }
         return true;
