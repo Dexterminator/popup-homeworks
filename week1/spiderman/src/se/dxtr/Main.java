@@ -10,10 +10,13 @@ public class Main {
         for (int i = 0; i < numberOfScenarios; i++) {
             int numberOfDistances = s.nextInt ();
             int[] distances = new int[numberOfDistances];
+            int totalDistance = 0;
             for (int j = 0; j < numberOfDistances; j++) {
-                distances[j] = s.nextInt ();
+                int distance = s.nextInt ();
+                distances[j] = distance;
+                totalDistance += distance;
             }
-            String workout = WorkoutOptimizer.getOptimalWorkout (distances);
+            String workout = WorkoutOptimizer.getOptimalWorkout (distances, totalDistance);
             System.out.println (workout);
         }
     }

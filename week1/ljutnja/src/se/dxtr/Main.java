@@ -5,15 +5,15 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
-        Scanner s = new Scanner (System.in);
-        int candies = s.nextInt ();
-        int numberOfChildren = s.nextInt ();
+        Kattio io = new Kattio (System.in, System.out);
+        int candies = io.getInt ();
+        int numberOfChildren = io.getInt ();
 
-        Map<Long, Integer> candyNumbers = new HashMap<> ();
+        Map<Integer, Integer> candyNumbers = new HashMap<> ();
 
-        long largest = Integer.MIN_VALUE;
+        int largest = Integer.MIN_VALUE;
         for (int i = 0; i < numberOfChildren; i++) {
-            long amount = s.nextInt ();
+            int amount = io.getInt ();
             largest = amount > largest ? amount : largest;
             candyNumbers.merge (amount, 1, Integer::sum);
         }
@@ -34,8 +34,10 @@ public class Main {
         }
 
         long squaredAngers = 0;
-        for (Long candyNumber : candyNumbers.keySet ())
-            squaredAngers += candyNumber * candyNumber * candyNumbers.get (candyNumber);
-        System.out.println (squaredAngers);
+        for (int candyNumber : candyNumbers.keySet ())
+            squaredAngers += (long)candyNumber * (long)candyNumber * candyNumbers.get (candyNumber);
+        io.println (squaredAngers);
+        io.flush ();
+        io.close ();
     }
 }

@@ -4,59 +4,71 @@ package se.dxtr;
  * Created by dexter on 04/09/15.
  */
 public class WorkoutOptimizer {
-    static int IMPOSSIBLE = Integer.MAX_VALUE;
-    enum Direction {
-        UP ("U"),
-        DOWN ("D");
+    static int IMPOSSIBLE = -1;
 
-        public final String character;
-        Direction (String character) {
-            this.character = character;
-        }
-    }
-
-    static String getOptimalWorkout (int[] distances) {
+    static String getOptimalWorkout (int[] distances, int totalDistance) {
         if (distances.length == 1)
-            return Path.impossible ().pathString;
-        Path path = new Path ("U", distances[0]);
-        Path bestPath = findBestPath (path, Direction.UP, 1, distances, distances[0]);
-        return bestPath.pathString;
+            return "IMPOSSIBLE";
+
+        int[][] heights = new int[distances.length][totalDistance];
+        char[][] path = new char[distances.length][totalDistance];
+
+        int distance = distances[distances.length - 1];
+        for (int i = 0; i < totalDistance; i++)
+            heights[distances.length - 1][i] = IMPOSSIBLE;
+        heights[distances.length - 1][distance] = distance;
+        path[distances.length - 1][distance] = 'D';
+
+        for (int i = distances.length - 2; i >= 0; i--) {
+            for (int height = 0; height < totalDistance; height++) {
+                int climbUpHeight = height + distances[i];
+                int nextStepHeightUp = climbUpHeight >= totalDistance ? IMPOSSIBLE : heights[i + 1][climbUpHeight];
+
+                int climbDownHeight = height - distances[i];
+                int nextStepHeightDown = climbDownHeight < 0 ? IMPOSSIBLE : heights[i + 1][climbDownHeight];
+
+                if (nextStepHeightUp == IMPOSSIBLE && nextStepHeightDown == IMPOSSIBLE) {
+                    heights[i][height] = IMPOSSIBLE;
+                } else if (nextStepHeightUp != IMPOSSIBLE && nextStepHeightDown == IMPOSSIBLE) {
+                    heights[i][height] = Math.max (nextStepHeightUp, height);
+                    path[i][height] = 'U';
+                } else if (nextStepHeightUp == IMPOSSIBLE && nextStepHeightDown != IMPOSSIBLE) {
+                    heights[i][height] = Math.max (nextStepHeightDown, height);
+                    path[i][height] = 'D';
+                } else if (nextStepHeightUp != IMPOSSIBLE && nextStepHeightDown != IMPOSSIBLE) {
+                    int best;
+                    if (nextStepHeightUp < nextStepHeightDown) {
+                        path[i][height] = 'U';
+                        best = nextStepHeightUp;
+                    } else {
+                        path[i][height] = 'D';
+                        best = nextStepHeightDown;
+                    }
+                    heights[i][height] = best;
+                }
+            }
+        }
+//
+//        for (int i = 0; i < path.length; i++) {
+//            for (char i1 : path[i]) {
+//                System.out.print ("." + i1 + " ");
+//            }
+//            System.out.println ();
+//        }
+
+        if (heights[0][0] == IMPOSSIBLE) {
+            return "IMPOSSIBLE";
+        }
+
+        int currentHeight = 0;
+        char[] solutionPath = new char[distances.length];
+        for (int i = 0; i < distances.length; i++) {
+            char direction = path[i][currentHeight];
+            solutionPath[i] = direction;
+            currentHeight = direction == 'U' ? currentHeight + distances[i] : currentHeight - distances[i];
+        }
+
+        return String.valueOf (solutionPath);
     }
 
-    static Path findBestPath (Path path, Direction direction, int index, int[] distances, int currentHeight) {
-        int climbed = distances[index];
-        if (direction == Direction.UP) {
-            currentHeight += climbed;
-        } else if (direction == Direction.DOWN) {
-            currentHeight -= climbed;
-        }
-
-        if (currentHeight < 0) {
-            return Path.impossible ();
-        }
-
-        String updatedPathString = path.pathString + direction.character;
-        Path updatedPath = new Path (updatedPathString, Math.max (path.maxHeight, currentHeight));
-        if (index == distances.length - 1) {
-            return currentHeight == 0 ? updatedPath : Path.impossible ();
-        }
-
-        Path path1 = findBestPath (updatedPath, Direction.UP, index + 1, distances, currentHeight);
-        Path path2 = findBestPath (updatedPath, Direction.DOWN, index + 1, distances, currentHeight);
-        return path1.maxHeight < path2.maxHeight ? path1 : path2;
-    }
-
-    static class Path {
-        public final String pathString;
-        public final int maxHeight;
-
-        public Path (String pathString, int maxHeight) {
-            this.pathString = pathString;
-            this.maxHeight = maxHeight;
-        }
-
-        public static Path impossible () {
-            return new Path ("IMPOSSIBLE", IMPOSSIBLE);
-        }
-    }
 }
