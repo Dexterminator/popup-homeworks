@@ -1,8 +1,5 @@
 package se.dxtr;
 
-/**
- * Created by dexter on 04/09/15.
- */
 public class WorkoutOptimizer {
     static int IMPOSSIBLE = -1;
 
@@ -10,7 +7,9 @@ public class WorkoutOptimizer {
         if (distances.length == 1)
             return "IMPOSSIBLE";
 
+        // heights[i][h] = lowest possible height at height h at distance step i
         int[][] heights = new int[distances.length][totalDistance];
+        // path[i][h] = The direction to climb at height i at distance step i to achieve the lowest height
         char[][] path = new char[distances.length][totalDistance];
 
         int distance = distances[distances.length - 1];
@@ -36,25 +35,16 @@ public class WorkoutOptimizer {
                     heights[i][height] = Math.max (nextStepHeightDown, height);
                     path[i][height] = 'D';
                 } else if (nextStepHeightUp != IMPOSSIBLE && nextStepHeightDown != IMPOSSIBLE) {
-                    int best;
                     if (nextStepHeightUp < nextStepHeightDown) {
                         path[i][height] = 'U';
-                        best = nextStepHeightUp;
+                        heights[i][height] = Math.max (nextStepHeightUp, height);
                     } else {
                         path[i][height] = 'D';
-                        best = nextStepHeightDown;
+                        heights[i][height] = Math.max (nextStepHeightDown, height);
                     }
-                    heights[i][height] = best;
                 }
             }
         }
-//
-//        for (int i = 0; i < path.length; i++) {
-//            for (char i1 : path[i]) {
-//                System.out.print ("." + i1 + " ");
-//            }
-//            System.out.println ();
-//        }
 
         if (heights[0][0] == IMPOSSIBLE) {
             return "IMPOSSIBLE";
