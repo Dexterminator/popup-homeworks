@@ -41,15 +41,13 @@ public class Main {
         mappings1.clear ();
         mappings2.clear ();
 
-        boolean createdWithoutContradictions = createExplicitMappings (tokens1, tokens2);
-        if (!createdWithoutContradictions)
-            return new String[]{"-"};
+        createExplicitMappings (tokens1, tokens2);
         resolveOtherMappings (tokens1, tokens2);
 
         return getResult (tokens1, tokens2);
     }
 
-    private static boolean createExplicitMappings (String[] tokens1, String[] tokens2) {
+    private static void createExplicitMappings (String[] tokens1, String[] tokens2) {
         for (int j = 0; j < tokens1.length; j++) {
             String token1 = tokens1[j];
             String token2 = tokens2[j];
@@ -60,7 +58,6 @@ public class Main {
                 mappings2.put (token2, token1);
             }
         }
-        return true;
     }
 
     private static void resolveOtherMappings (String[] tokens1, String[] tokens2) {
