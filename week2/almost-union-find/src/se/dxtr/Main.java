@@ -17,14 +17,20 @@ public class Main {
                     int q = io.getInt ();
                     io.println ("union " + p + ", " + q);
                     disjointSets.union (p, q);
+//                    io.println ("union: size and sum " + p);
+//                    int[] sizeAndSum = disjointSets.getSizeAndSum (p);
+//                    io.println (sizeAndSumString (sizeAndSum));
                 } else if (op == 2) {
                     int p = io.getInt ();
                     int q = io.getInt ();
                     io.println ("move " + p + ", " + q);
                     disjointSets.move (p, q);
+//                    io.println ("move: size and sum " + p);
+//                    int[] sizeAndSum = disjointSets.getSizeAndSum (p);
+//                    io.println (sizeAndSumString (sizeAndSum));
                 } else if (op == 3) {
                     int p = io.getInt ();
-                    io.println ("size and sum " + p);
+                    io.println ("print: size and sum " + p);
                     int[] sizeAndSum = disjointSets.getSizeAndSum (p);
                     io.println (sizeAndSumString (sizeAndSum));
                 }
