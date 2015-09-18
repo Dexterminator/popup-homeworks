@@ -36,11 +36,11 @@ public class Main {
         }
 
         for (int i = 0; i < n; i++) {
-            Integer leaf = leaves.poll ();
-            if (leaf == null) {
+            if (leaves.isEmpty ()) {
                 io.println ("Error");
                 return;
             }
+            int leaf = leaves.poll ();
             u[i] = leaf;
             usesLeft[v[i]]--;
             if (usesLeft[v[i]] == 0)
