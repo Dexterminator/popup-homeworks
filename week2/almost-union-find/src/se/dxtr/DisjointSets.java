@@ -5,62 +5,42 @@ package se.dxtr;
  */
 public class DisjointSets {
     private int[] ids;
-    private int[] heights;
     private int[] sizes;
     private int[] sums;
 
     public DisjointSets (int n) {
         ids = new int[n];
-        heights = new int[n];
         sizes = new int[n];
         sums = new int[n];
         for (int i = 0; i < n; i++) {
             ids[i] = i;
-            heights[i] = 1;
             sums[i] = i;
             sizes[i] = 1;
         }
     }
 
     public void union (int a, int b) {
-        int aRoot = root (a);
-        int bRoot = root (b);
-        if (aRoot == bRoot)
+        int aId = ids[a];
+        if (aId == ids[b])
             return;
-        if (heights[aRoot] < heights[bRoot]) {
-            ids[aRoot] = bRoot;
-            sizes[bRoot] += sizes[aRoot];
-            sums[bRoot] += sums[aRoot];
-        } else if (heights[aRoot] > heights[bRoot]){
-            ids[bRoot] = aRoot;
-            sizes[aRoot] += sizes[bRoot];
-            sums[aRoot] += sums[bRoot];
-        } else { // heights equal, attaching the tree will increase height by 1
-            ids[aRoot] = bRoot;
-            sizes[bRoot] += sizes[aRoot];
-            sums[bRoot] += sums[aRoot];
-            heights[bRoot]++;
+        for (int i = 1; i < ids.length; i++) {
+            if (ids[i] == aId) {
+                sums[ids[b]] += i;
+                sizes[ids[b]]++;
+                ids[i] = ids[b];
+            }
         }
     }
 
     public void move (int a, int b) {
-        int aRoot = root (a);
-        int bRoot = root (b);
-        ids[a] = bRoot;
-        sizes[aRoot]--;
-        sizes[bRoot]++;
-        sums[aRoot] -= a;
-        sums[bRoot] += a;
+        sums[ids[a]] -= a;
+        sums[ids[b]] += a;
+        sizes[ids[a]]--;
+        sizes[ids[b]]++;
+        ids[a] = ids[b];
     }
 
     public int[] getSizeAndSum (int a) {
-        int aRoot = root (a);
-        return new int[]{sizes[aRoot], sums[aRoot]};
-    }
-
-    private int root (int a) {
-        if (a != ids[a])
-            ids[a] = root (ids[a]);
-        return ids[a];
+        return new int[]{sizes[ids[a]], sums[ids[a]]};
     }
 }
