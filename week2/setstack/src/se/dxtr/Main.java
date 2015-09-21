@@ -14,7 +14,7 @@ public class Main {
 
     private static void performOperations (Kattio io) {
         int operations = io.getInt ();
-        SetStackComputer setStack = new SetStackComputer (io);
+        SetStackComputer setStack = new SetStackComputer ();
         for (int j = 0; j < operations; j++) {
             String operation = io.getWord ();
             switch (operation) {
