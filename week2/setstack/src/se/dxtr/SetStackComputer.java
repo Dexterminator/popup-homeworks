@@ -26,7 +26,7 @@ public class SetStackComputer {
     public void union () {
         int s1 = stack.pop ();
         int s2 = stack.pop ();
-        HashSet<Integer> union = new HashSet<> (ids2Sets.get (s1));
+        Set<Integer> union = new HashSet<> (ids2Sets.get (s1));
         union.addAll (ids2Sets.get (s2));
         updateStack (union);
     }
@@ -34,7 +34,7 @@ public class SetStackComputer {
     public void intersect () {
         int s1 = stack.pop ();
         int s2 = stack.pop ();
-        HashSet<Integer> intersection = new HashSet<> (ids2Sets.get (s1));
+        Set<Integer> intersection = new HashSet<> (ids2Sets.get (s1));
         intersection.retainAll (ids2Sets.get (s2));
         updateStack (intersection);
     }
