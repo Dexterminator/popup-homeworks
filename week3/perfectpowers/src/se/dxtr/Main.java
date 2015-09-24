@@ -15,10 +15,6 @@ public class Main {
             int p = findP (x);
             io.println (p);
         }
-//        io.println (findP (Integer.MAX_VALUE));
-//        io.println (findP (2));
-//        io.println (findP (Integer.MIN_VALUE));
-//        io.println (findP (3600));
         io.close ();
     }
 
@@ -28,7 +24,7 @@ public class Main {
         long n = absX;
 
 //        io.println ("absx: " + absX);
-        List<Integer> factorPowers = new ArrayList<Integer> ();
+        List<Integer> factorPowers = new ArrayList<> ();
         int sqrtX = ((int) Math.sqrt (absX));
         for (long i = 2; i*i <= n; i++) {
             int powerOfFactor = 0;
