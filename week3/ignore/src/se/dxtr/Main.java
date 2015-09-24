@@ -1,47 +1,35 @@
 package se.dxtr;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Main {
 
-    static List<String> upsideDown = new ArrayList<> ();
-    static int lastCalculated = 0;
     static Kattio io;
+    static int[] below7 = new int[]{1, 2, 5, 9, 8, 6};
 
-    public static void main(String[] args) {
+    public static void main (String[] args) {
         io = new Kattio (System.in, System.out);
         while (io.hasMoreTokens ()) {
             int k = io.getInt ();
-            calculate (k);
+            if (k < 7)
+                io.println (below7[k-1]);
+            else
+                calculate (k);
         }
-//        io.println (upsideDown);
         io.close ();
     }
 
     public static void calculate (int k) {
-        while (upsideDown.size () < k) {
-            lastCalculated++;
-            String s = String.valueOf (lastCalculated);
-            if (!(s.contains ("3") || s.contains ("4") || s.contains ("7"))) {
-                if (upsideDown.size () != k - 1) {
-                    upsideDown.add (null);
-                } else {
-                    char[] chars = s.toCharArray ();
-                    char[] upsideDownChars = new char[s.length ()];
-                    for (int i = 0; i < s.length (); i++) {
-                        int upsideDownIndex = s.length () - i - 1;
-                        if (chars[i] == '6')
-                            upsideDownChars[upsideDownIndex] = '9';
-                        else if (chars[i] == '9')
-                            upsideDownChars[upsideDownIndex] = '6';
-                        else
-                            upsideDownChars[upsideDownIndex] = chars[i];
-                    }
-                    upsideDown.add (String.valueOf (upsideDownChars));
-                }
-            }
+        String baseSeven = Integer.toString (k, 7);
+        char[] chars = baseSeven.toCharArray ();
+        char[] upsideDownChars = new char[baseSeven.length ()];
+        for (int i = 0; i < baseSeven.length (); i++) {
+            int upsideDownIndex = baseSeven.length () - i - 1;
+            if (chars[i] == '6')
+                upsideDownChars[upsideDownIndex] = '9';
+            else if (chars[i] == '9')
+                upsideDownChars[upsideDownIndex] = '6';
+            else
+                upsideDownChars[upsideDownIndex] = chars[i];
         }
-        io.println (upsideDown.get (k-1));
+        io.println (String.valueOf (upsideDownChars));
     }
 }
