@@ -12,42 +12,35 @@ public class Main {
             long x = io.getLong ();
             if (x == 0)
                 break;
-            int p = findP (x);
+            long p = findP (x);
             io.println (p);
         }
         io.close ();
     }
 
-    private static int findP (long x) {
-//        io.println ("x: " + x);
+    private static long findP (long x) {
         long absX = Math.abs (x);
         long n = absX;
 
-//        io.println ("absx: " + absX);
-        List<Integer> factorPowers = new ArrayList<> ();
-        int sqrtX = ((int) Math.sqrt (absX));
-        for (long i = 2; i*i <= n; i++) {
-            int powerOfFactor = 0;
+        long sqrtX = (long) (Math.sqrt (absX));
+        long powGcd = -1;
+        for (long i = 2; i <= sqrtX; i++) {
+            if (n == 1)
+                break;
+
+            long powerOfFactor = 0;
             while (n % i == 0) {
                 powerOfFactor++;
                 n /= i;
             }
 
             if (powerOfFactor > 0)
-                factorPowers.add (powerOfFactor);
+                powGcd = powGcd == -1 ? powerOfFactor : gcd (powGcd, powerOfFactor);
         }
-//        io.println (factorPowers);
 
-        if (factorPowers.isEmpty ())
+        if (powGcd == -1 || x < 0 && powGcd % 2 == 0)
             return 1;
-
-        long powGcd = factorPowers.get (0);
-        for (int factorPower : factorPowers.subList (1, factorPowers.size ()))
-            powGcd = gcd (powGcd, factorPower);
-
-        if (x < 0 && powGcd % 2 != 1)
-            return 1;
-        return (int) powGcd;
+        return powGcd;
     }
 
     private static long gcd (long a, long b) {
