@@ -1,8 +1,5 @@
 package se.dxtr;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Main {
     static Kattio io;
 
@@ -25,21 +22,24 @@ public class Main {
         long sqrtX = (long) (Math.sqrt (absX));
         long powGcd = -1;
         for (long i = 2; i <= sqrtX; i++) {
-            if (n == 1)
-                break;
-
-            long powerOfFactor = 0;
-            while (n % i == 0) {
-                powerOfFactor++;
-                n /= i;
-            }
-
-            if (powerOfFactor > 0)
+            if (n % i == 0) {
+                int powerOfFactor = 0;
+                while (n % i == 0) {
+                    powerOfFactor++;
+                    n /= i;
+                }
                 powGcd = powGcd == -1 ? powerOfFactor : gcd (powGcd, powerOfFactor);
+            }
         }
 
-        if (powGcd == -1 || x < 0 && powGcd % 2 == 0)
+        if (powGcd == -1)
             return 1;
+
+        if (x < 0) {
+            while (powGcd % 2 == 0)
+                powGcd /= 2;
+        }
+
         return powGcd;
     }
 
