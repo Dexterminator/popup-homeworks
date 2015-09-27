@@ -24,6 +24,7 @@ public class Main {
                 bestFraction = fraction;
             numberOfRepeatingDigits++;
         }
+
         io.println (bestFraction.numerator + "/" + bestFraction.denominator);
     }
 
@@ -32,16 +33,23 @@ public class Main {
         long equation2LeftSide = (long) Math.pow (10, digits.length () - numberOfRepeatingDigits);
 
         long equation1RightSide = Integer.valueOf (digits);
-        long equation2RightSide;
-        if (digits.length () - numberOfRepeatingDigits == 0)
-            equation2RightSide = 0;
-        else
-            equation2RightSide = Integer.valueOf (digits.substring (0, digits.length () - numberOfRepeatingDigits));
+        long equation2RightSide = getEquation2RightSide (digits, numberOfRepeatingDigits);
 
+        // We now have an equation like
+        // 100x = 53
+        // 10x = 5
+        // 90x = 46 => x = 48/90 = 8/15
         long denominator = equation1LeftSide - equation2LeftSide;
         long numerator = equation1RightSide - equation2RightSide;
 
         return getSimplifiedFraction (numerator, denominator);
+    }
+
+    private static long getEquation2RightSide (String digits, int numberOfRepeatingDigits) {
+        if (digits.length () - numberOfRepeatingDigits == 0)
+            return 0;
+        else
+            return Integer.valueOf (digits.substring (0, digits.length () - numberOfRepeatingDigits));
     }
 
     private static Fraction getSimplifiedFraction (long numerator, long denominator) {
