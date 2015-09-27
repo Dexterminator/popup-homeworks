@@ -15,33 +15,33 @@ public class Main {
     }
 
     private static void calculateFraction (String number) {
-        String s = getRelevantNumbers (number.split ("\\.")[1]);
-        io.println ("s: " + s);
+        String digits = number.split ("\\.")[1];
         Fraction bestFraction = new Fraction (0, Integer.MAX_VALUE);
         int numberOfRepeatingDigits = 1;
-        while (numberOfRepeatingDigits <= s.length ()) {
-            long equation1LeftSide = (long) Math.pow (10, s.length ());
-            long equation2LeftSide = (long) Math.pow (10, s.length () - numberOfRepeatingDigits);
-
-            long equation1RightSide = Integer.valueOf (s);
-            long equation2RightSide = s.length () - numberOfRepeatingDigits == 0 ? 0 : Integer.valueOf (s.substring (0, s.length () - numberOfRepeatingDigits));
-
-            long denominator = equation1LeftSide - equation2LeftSide;
-            long numerator = equation1RightSide - equation2RightSide;
-            io.println ("repeating: " + numberOfRepeatingDigits);
-            io.println (equation1LeftSide + "x = " + equation1RightSide);
-            io.println (equation2LeftSide + "x = " + equation2RightSide);
-
-            Fraction fraction = getSimplifiedFraction (numerator, denominator);
-            if (fraction.denominator > fraction.numerator && fraction.denominator < bestFraction.denominator)
+        while (numberOfRepeatingDigits <= digits.length ()) {
+            Fraction fraction = getFraction (digits, numberOfRepeatingDigits);
+            if (fraction.denominator >= fraction.numerator && fraction.denominator < bestFraction.denominator)
                 bestFraction = fraction;
-            io.println (fraction.numerator + "/" + fraction.denominator);
             numberOfRepeatingDigits++;
         }
-
-        io.println ("best:");
         io.println (bestFraction.numerator + "/" + bestFraction.denominator);
-        io.println ();
+    }
+
+    private static Fraction getFraction (String digits, int numberOfRepeatingDigits) {
+        long equation1LeftSide = (long) Math.pow (10, digits.length ());
+        long equation2LeftSide = (long) Math.pow (10, digits.length () - numberOfRepeatingDigits);
+
+        long equation1RightSide = Integer.valueOf (digits);
+        long equation2RightSide;
+        if (digits.length () - numberOfRepeatingDigits == 0)
+            equation2RightSide = 0;
+        else
+            equation2RightSide = Integer.valueOf (digits.substring (0, digits.length () - numberOfRepeatingDigits));
+
+        long denominator = equation1LeftSide - equation2LeftSide;
+        long numerator = equation1RightSide - equation2RightSide;
+
+        return getSimplifiedFraction (numerator, denominator);
     }
 
     private static Fraction getSimplifiedFraction (long numerator, long denominator) {
@@ -53,20 +53,6 @@ public class Main {
         }
 
         return new Fraction (numerator, denominator);
-    }
-
-    private static String getRelevantNumbers (String s) {
-//        char repeating = s.charAt (s.length () - 1);
-//        char[] digits = s.toCharArray ();
-//        int lastRepeatingIndex = 0;
-//        for (int i = digits.length - 1; i >= 0; i--) {
-//            if (digits[i] != repeating) {
-//                lastRepeatingIndex = i + 1;
-//                break;
-//            }
-//        }
-//        s = s.substring (0, lastRepeatingIndex + 1);
-        return s;
     }
 
     private static long gcd (long a, long b) {
