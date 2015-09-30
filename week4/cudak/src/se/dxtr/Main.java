@@ -7,6 +7,6 @@ public class Main {
         int left = io.getInt ();
         int right = io.getInt ();
         int digitSum = io.getInt ();
-        
+
     }
 }
