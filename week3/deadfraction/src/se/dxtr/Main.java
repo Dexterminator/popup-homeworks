@@ -38,7 +38,7 @@ public class Main {
         // We now have an equation like
         // 100x = 53
         // 10x = 5
-        // 90x = 46 => x = 48/90 = 8/15
+        // 90x = 48 => x = 48/90 = 8/15
         long denominator = equation1LeftSide - equation2LeftSide;
         long numerator = equation1RightSide - equation2RightSide;
 
