@@ -13,55 +13,62 @@ public class Main {
     public static void main (String[] args) {
         int n = io.getInt ();
         for (int i = 0; i < n; i++)
-            fewestPebbles ();
+            solve ();
         io.close ();
     }
 
-    private static void fewestPebbles () {
-        BitSet root = new BitSet (SIZE);
+    private static void solve () {
+        BitSet firstState = new BitSet (SIZE);
         char[] game = io.getWord ().toCharArray ();
         for (int i = 0; i < game.length; i++) {
             if (game[i] == 'o')
-                root.set (i);
+                firstState.set (i);
         }
-        int fewest = play (root);
+        int fewest = play (firstState);
         io.println (fewest);
     }
 
-    private static int play (BitSet game) {
-        if (states.containsKey (game)) {
-            return states.get (game);
+    private static int play (BitSet state) {
+        if (states.containsKey (state))
+            return states.get (state);
+
+        List<BitSet> moves = getPossibleMoves (state);
+        if (moves.isEmpty ()) {
+            states.put (state, state.cardinality ());
+            return state.cardinality ();
         }
 
-        int i = game.nextSetBit (0);
+        int fewestPebbles = getFewestPebbles (moves);
+        states.put (state, fewestPebbles);
+        return fewestPebbles;
+    }
+
+    private static List<BitSet> getPossibleMoves (BitSet state) {
+        int i = state.nextSetBit (0);
         List<BitSet> moves = new ArrayList<> ();
         while (i != -1) {
-            if (moveLeftPossible (game, i)) {
-                BitSet result = makeMoveLeft (game, i);
+            if (moveLeftPossible (state, i)) {
+                BitSet result = makeMoveLeft (state, i);
                 moves.add (result);
             }
 
-            if (moveRightPossible (game, i)) {
-                BitSet result = makeMoveRight (game, i);
+            if (moveRightPossible (state, i)) {
+                BitSet result = makeMoveRight (state, i);
                 moves.add (result);
             }
 
-            i = game.nextSetBit (i + 1);
+            i = state.nextSetBit (i + 1);
         }
+        return moves;
+    }
 
-        if (moves.isEmpty ()) {
-            states.put (game, game.cardinality ());
-            return game.cardinality ();
-        }
-
+    private static int getFewestPebbles (List<BitSet> moves) {
         int fewestPebbles = Integer.MAX_VALUE;
         for (BitSet move : moves) {
             int pebbles = play (move);
             if (pebbles < fewestPebbles)
                 fewestPebbles = pebbles;
         }
-
-        states.put (game, fewestPebbles);
         return fewestPebbles;
     }
 
