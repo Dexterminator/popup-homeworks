@@ -19,7 +19,7 @@ public class Main {
             }
         }
 
-        Graph<Time> graph = new Graph<> (m + 2);
+        Graph<Time> graph = new Graph<> (n+1);
         for (int i = 0; i < m; i++) {
             int from = io.getInt ();
             int to = io.getInt ();
