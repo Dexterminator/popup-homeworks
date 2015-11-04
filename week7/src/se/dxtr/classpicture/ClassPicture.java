@@ -1,6 +1,7 @@
 package se.dxtr.classpicture;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by dexter on 04/11/15.
@@ -30,53 +31,70 @@ public class ClassPicture {
                 disLikes[id2][id1] = true;
             }
 
-            lineUp(n, disLikes, idToName);
+            Permuter permuter = new Permuter(idToName);
+            permuter.lineUp(n, disLikes);
+            System.err.println(permuter.bestSolution);
         }
     }
 
-    private static void lineUp(int n, boolean[][] dislikes, Map<Integer, String> idToName) {
-        int[] ids = new int[n];
-        for (int i = 0; i < n; i++) {
-            ids[i] = i;
-        }
-        permute(ids, 0, dislikes, idToName);
-    }
+    private static class Permuter {
+        final Map<Integer, String> idToName;
+        String bestSolution = null;
 
-    static void permute(int[] ids, int k, boolean[][] dislikes, Map<Integer, String> idToName) {
-        for (int i = k; i < ids.length; i++) {
-            swap(ids, i, k);
-            permute(ids, k + 1, dislikes, idToName);
-            swap(ids, k, i);
+        public Permuter(Map<Integer, String> idToName) {
+            this.idToName = idToName;
         }
 
-        if (k == ids.length - 1) {
-//            System.err.println(Arrays.toString(ids));
-//            System.err.println(correctSolution(ids, dislikes));
-            if (correctSolution(ids, dislikes)) {
-                System.err.print("VALID: ");
+        public void lineUp(int n, boolean[][] dislikes) {
+            int[] ids = new int[n];
+            for (int i = 0; i < n; i++) {
+                ids[i] = i;
             }
-            for (int id : ids) {
-                System.err.print(idToName.get(id) + " ");
+            permute(ids, 0, dislikes);
+        }
+
+        private void permute(int[] ids, int k, boolean[][] dislikes) {
+            for (int i = k; i < ids.length; i++) {
+                swap(ids, i, k);
+                permute(ids, k + 1, dislikes);
+                swap(ids, k, i);
             }
-            System.err.println("");
+
+            if (k == ids.length - 1) {
+                if (correctSolution(ids, dislikes)) {
+                    System.err.print("VALID: ");
+                    updateSolutionIfBetter(ids);
+                }
+                System.err.println(Arrays.toString(ids));
+            }
+        }
+
+        private void updateSolutionIfBetter(int[] ids) {
+            if (bestSolution == null) {
+                bestSolution = Arrays.stream(ids).mapToObj(idToName::get).collect(Collectors.joining(" "));
+            } else {
+                String newSolution = Arrays.stream(ids).mapToObj(idToName::get).collect(Collectors.joining(" "));
+                if (newSolution.compareTo(newSolution) > 0) {
+                    bestSolution = newSolution;
+                }
+            }
+        }
+
+        private boolean correctSolution(int[] ids, boolean[][] dislikes) {
+            //TODO Check for out of bounds
+            for (int i = 0; i < ids.length - 1; i++) {
+                int id1 = ids[i];
+                int id2 = ids[i + 1];
+                if (dislikes[id1][id2])
+                    return false;
+            }
+            return true;
+        }
+
+        private void swap(int[] nums, int i, int j) {
+            int tmp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = tmp;
         }
     }
-
-    static boolean correctSolution(int[] ids, boolean[][] dislikes) {
-        //TODO Check for out of bounds
-        for (int i = 0; i < ids.length - 1; i++) {
-            int id1 = ids[i];
-            int id2 = ids[i + 1];
-            if (dislikes[id1][id2])
-                return false;
-        }
-        return true;
-    }
-
-    static void swap(int[] nums, int i, int j) {
-        int tmp = nums[i];
-        nums[i] = nums[j];
-        nums[j] = tmp;
-    }
-
 }
