@@ -1,6 +1,8 @@
 package se.dxtr.classpicture;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -33,13 +35,22 @@ public class ClassPicture {
 
             Permuter permuter = new Permuter(idToName);
             permuter.lineUp(n, disLikes);
-            System.err.println(permuter.bestSolution);
+//            System.err.println(permuter.times);
+            if (permuter.bestSolution == null) {
+                io.println("You all need therapy.");
+            } else {
+                for (String name : permuter.bestSolution)
+                    io.print(name + " ");
+                io.println();
+            }
         }
+        io.close();
     }
 
     private static class Permuter {
         final Map<Integer, String> idToName;
-        String bestSolution = null;
+        int times = 0;
+        String[] bestSolution = null;
 
         public Permuter(Map<Integer, String> idToName) {
             this.idToName = idToName;
@@ -54,30 +65,53 @@ public class ClassPicture {
         }
 
         private void permute(int[] ids, int k, boolean[][] dislikes) {
+            for (int i = 0; i < k; i++) {
+                if (i + 1 < ids.length && dislikes[ids[i]][ids[i + 1]]) {
+                    return;
+                }
+            }
             for (int i = k; i < ids.length; i++) {
                 swap(ids, i, k);
-                permute(ids, k + 1, dislikes);
+                if (k + 1 < ids.length && !dislikes[ids[k]][ids[k + 1]]) {
+                    permute(ids, k + 1, dislikes);
+                    times++;
+                }
                 swap(ids, k, i);
             }
+//            System.err.println("ids = " + Arrays.toString(ids) + ", k =  " + k);
+//            System.err.println("names = " + Arrays.stream(ids).mapToObj(idToName::get).collect(Collectors.joining(" ")) + ", k =  " + k);
 
             if (k == ids.length - 1) {
                 if (correctSolution(ids, dislikes)) {
-                    System.err.print("VALID: ");
+//                    System.err.print("VALID: ");
                     updateSolutionIfBetter(ids);
                 }
-                System.err.println(Arrays.toString(ids));
+//                System.err.println(Arrays.toString(ids));
             }
         }
 
         private void updateSolutionIfBetter(int[] ids) {
+            String[] newSolution = getNames(ids);
             if (bestSolution == null) {
-                bestSolution = Arrays.stream(ids).mapToObj(idToName::get).collect(Collectors.joining(" "));
+                bestSolution = newSolution;
             } else {
-                String newSolution = Arrays.stream(ids).mapToObj(idToName::get).collect(Collectors.joining(" "));
-                if (newSolution.compareTo(newSolution) > 0) {
-                    bestSolution = newSolution;
+                for (int i = 0; i < newSolution.length; i++) {
+                    if (newSolution[i].compareTo(bestSolution[i]) > 0) {
+                        break;
+                    } else if (newSolution[i].compareTo(bestSolution[i]) < 0) {
+                        bestSolution = newSolution;
+                        break;
+                    }
                 }
             }
+        }
+
+        private String[] getNames(int[] ids) {
+            String[] newSolution = new String[ids.length];
+            for (int i = 0; i < ids.length; i++) {
+                newSolution[i] = idToName.get(ids[i]);
+            }
+            return newSolution;
         }
 
         private boolean correctSolution(int[] ids, boolean[][] dislikes) {
