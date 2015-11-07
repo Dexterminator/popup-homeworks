@@ -3,7 +3,6 @@ package se.dxtr.classpicture;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by dexter on 04/11/15.
@@ -35,7 +34,7 @@ public class ClassPicture {
 
             Permuter permuter = new Permuter(idToName);
             permuter.lineUp(n, disLikes);
-//            System.err.println(permuter.times);
+            System.err.println(permuter.times);
             if (permuter.bestSolution == null) {
                 io.println("You all need therapy.");
             } else {
@@ -66,12 +65,16 @@ public class ClassPicture {
 
         private void permute(int[] ids, int k, boolean[][] dislikes) {
             for (int i = 0; i < k; i++) {
-                if (i + 1 < ids.length && dislikes[ids[i]][ids[i + 1]]) {
+                if (i + 1 < ids.length && dislikes[ids[i]][ids[i + 1]]
+                        || (bestSolution != null && idToName.get(ids[i]).compareTo(bestSolution[i]) > 0)) {
                     return;
                 }
             }
+
+            System.err.println("k: " + k);
             for (int i = k; i < ids.length; i++) {
                 swap(ids, i, k);
+                System.err.println("loop: " + Arrays.toString(ids));
                 if (k + 1 < ids.length && !dislikes[ids[k]][ids[k + 1]]) {
                     permute(ids, k + 1, dislikes);
                     times++;
@@ -82,10 +85,10 @@ public class ClassPicture {
 //            System.err.println("names = " + Arrays.stream(ids).mapToObj(idToName::get).collect(Collectors.joining(" ")) + ", k =  " + k);
 
             if (k == ids.length - 1) {
-                if (correctSolution(ids, dislikes)) {
+//                if (correctSolution(ids, dislikes)) {
 //                    System.err.print("VALID: ");
-                    updateSolutionIfBetter(ids);
-                }
+                updateSolutionIfBetter(ids);
+//                }
 //                System.err.println(Arrays.toString(ids));
             }
         }
