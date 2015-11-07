@@ -12,18 +12,18 @@ import java.util.function.Function;
 public class Satisfiability {
     static class Variable {
         public int id;
-        public Function<Boolean, Boolean> fn;
+        public Function<Boolean, Boolean> variableValue;
 
-        public Variable(int id, Function<Boolean, Boolean> fn) {
+        public Variable(int id, Function<Boolean, Boolean> variableValue) {
             this.id = id;
-            this.fn = fn;
+            this.variableValue = variableValue;
         }
 
         @Override
         public String toString() {
             return "Variable{" +
                     "id=" + id +
-                    ", fn=" + fn.apply(true) +
+                    ", variableValue=" + variableValue.apply(true) +
                     '}';
         }
     }
@@ -35,21 +35,25 @@ public class Satisfiability {
     public static void main(String[] args) throws IOException {
         int cases = io.getInt();
         for (int i = 0; i < cases; i++) {
-            satisfiable = false;
-//            System.err.println("case " + i);
-            int variablesCount = io.getInt();
-            int clauseCount = io.getInt();
-            List<Variable[]> clauses = new ArrayList<>();
-            for (int j = 0; j < clauseCount; j++) {
-                String line = io.getLine();
-                String[] split = line.split(" v ");
-                Variable[] clause = new Variable[split.length];
-                parseClause(split, clause);
-                clauses.add(clause);
-            }
-            solve(variablesCount, clauses);
+            handleCase();
         }
         io.close();
+    }
+
+    private static void handleCase() throws IOException {
+//                    System.err.println("case " + i);
+        int variablesCount = io.getInt();
+        int clauseCount = io.getInt();
+        List<Variable[]> clauses = new ArrayList<>();
+        for (int j = 0; j < clauseCount; j++) {
+            String line = io.getLine();
+            String[] split = line.split(" v ");
+            Variable[] clause = new Variable[split.length];
+            parseClause(split, clause);
+            clauses.add(clause);
+        }
+        satisfiable = false;
+        solve(variablesCount, clauses);
     }
 
     private static void parseClause(String[] split, Variable[] clause) {
@@ -76,10 +80,13 @@ public class Satisfiability {
     private static void testAssignment(int k, List<Variable[]> clauses, boolean[] assignment) {
         if (satisfiable)
             return;
+
         if (k == assignment.length) {
-//            System.err.println("assignment = " + Arrays.toString(assignment));
+            System.err.println("");
+            System.err.println("assignment = " + Arrays.toString(assignment));
             for (Variable[] clause : clauses) {
                 boolean satisfied = isSatisfied(assignment, clause);
+                System.err.println("satisfied = " + satisfied);
                 if (!satisfied)
                     return;
             }
@@ -87,6 +94,7 @@ public class Satisfiability {
             satisfiable = true;
             return;
         }
+
         testAssignment(k + 1, clauses, assignment);
         assignment[k] = true;
         testAssignment(k + 1, clauses, assignment);
@@ -94,9 +102,10 @@ public class Satisfiability {
     }
 
     private static boolean isSatisfied(boolean[] assignment, Variable[] clause) {
+        System.err.println("clause = " + Arrays.toString(clause));
         for (Variable variable : clause) {
             boolean assignedValue = assignment[variable.id];
-            if (variable.fn.apply(assignedValue) == true)
+            if (variable.variableValue.apply(assignedValue))
                 return true;
         }
         // No variable was true

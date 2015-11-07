@@ -1,4 +1,4 @@
-2
+3
 3 3
 X1 v X2
 ~X1
@@ -9,3 +9,7 @@ X1 v ~X2
 X2 v ~X3
 X3 v ~X1
 ~X1 v ~X2 v ~X3
+4 3
+X1 v X2 v X4 v X3
+~X1 v X2
+~X4 v X3
