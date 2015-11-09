@@ -1,7 +1,9 @@
 package se.dxtr.classpicture;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by dexter on 04/11/15.
@@ -33,7 +35,7 @@ public class ClassPicture {
 
             Permuter permuter = new Permuter(idToName);
             permuter.lineUp(n, disLikes);
-            System.err.println(permuter.times);
+//            System.err.println(permuter.times);
             if (permuter.bestSolution == null) {
                 io.println("You all need therapy.");
             } else {
@@ -41,6 +43,7 @@ public class ClassPicture {
                     io.print(name + " ");
                 io.println();
             }
+
         }
         io.close();
     }
@@ -64,30 +67,61 @@ public class ClassPicture {
 
         private void permute(int[] ids, int k, boolean[][] dislikes) {
             if (k == ids.length) {
-                updateSolutionIfBetter(ids);
+//                System.err.println("ids " + Arrays.toString(ids));
+//                boolean correctSolution = correctSolution(ids, dislikes);
+//                System.err.println("correctSolution = " + correctSolution);
+//                assert correctSolution;
+//                System.err.println("names = " + Arrays.stream(ids).mapToObj(idToName::get).collect(Collectors.joining(" ")));
+                bestSolution = getNames(ids);
+//                updateSolutionIfBetter(ids);
                 return;
             }
 
-//            System.err.println("k: " + k);
+//            if (!badBranch(ids, dislikes, k)) {
+//                for (int i = k; i < ids.length; i++) {
+//                    swap(ids, i, k);
+//                    permute(ids, k + 1, dislikes);
+//                    times++;
+//                    swap(ids, k, i);
+//                }
+//            }
+
             for (int i = k; i < ids.length; i++) {
                 swap(ids, i, k);
-//                System.err.println("loop: " + Arrays.toString(ids));
-//                if (k + 1 < ids.length && !dislikes[ids[k]][ids[k + 1]]) {
                 if (!badBranch(ids, dislikes, k)) {
                     permute(ids, k + 1, dislikes);
+                    times++;
                 }
-                times++;
-//                }
                 swap(ids, k, i);
             }
-//            System.err.println("ids = " + Arrays.toString(ids) + ", k =  " + k);
-//            System.err.println("names = " + Arrays.stream(ids).mapToObj(idToName::get).collect(Collectors.joining(" ")) + ", k =  " + k);
         }
 
         private boolean badBranch(int[] ids, boolean[][] dislikes, int k) {
-            if ((k > 0 && dislikes[ids[k - 1]][ids[k]])) {
-                return true;
+            for (int i = 0; i <= k; i++) {
+                if (i + 1 < ids.length && dislikes[ids[i]][ids[i + 1]]) {
+                    return true;
+                }
             }
+
+            if (bestSolution != null) {
+                String[] newSolution = getNames(ids);
+                for (int i = 0; i < k; i++) {
+                    if (newSolution[i].compareTo(bestSolution[i]) > 0) {
+                        return true;
+                    } else if (newSolution[i].compareTo(bestSolution[i]) < 0) {
+                        break;
+                    }
+                }
+            }
+
+//            if ((k > 0 && dislikes[ids[k - 1]][ids[k]])) {
+//                return true;
+//            }
+//            for (int i = 0; i < k; i++) {
+//                if (dislikes[ids[i]][ids[k]]) {
+//                    return true;
+//                }
+//            }
             return false;
         }
 

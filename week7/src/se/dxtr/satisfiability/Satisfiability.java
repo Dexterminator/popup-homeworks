@@ -99,13 +99,8 @@ public class Satisfiability {
                 return;
 
             if (k == assignment.length) {
-                for (Variable[] clause : clauses) {
-                    boolean satisfied = isSatisfied(clause);
-                    if (!satisfied)
-                        return;
-                }
-                // All clauses are satisfied
-                satisfiable = true;
+                if (allClausesSatisfied())
+                    satisfiable = true;
                 return;
             }
 
@@ -113,6 +108,15 @@ public class Satisfiability {
             assignment[k] = true;
             testAssignment(k + 1);
             assignment[k] = false;
+        }
+
+        private boolean allClausesSatisfied() {
+            for (Variable[] clause : clauses) {
+                if (!isSatisfied(clause))
+                    return false;
+            }
+            // All clauses are satisfied
+            return true;
         }
 
         private boolean isSatisfied(Variable[] clause) {
