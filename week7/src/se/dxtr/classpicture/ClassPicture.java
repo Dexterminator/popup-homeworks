@@ -1,9 +1,6 @@
 package se.dxtr.classpicture;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * Created by dexter on 04/11/15.
@@ -13,157 +10,100 @@ public class ClassPicture {
 
     public static void main(String[] args) {
         while (io.hasMoreTokens()) {
-            Map<String, Integer> nameToid = new HashMap<>();
-            Map<Integer, String> idToName = new HashMap<>();
             int n = io.getInt();
+            Map<String, Set<String>> dislikes = new HashMap<>();
+            String[] names = new String[n];
             for (int i = 0; i < n; i++) {
                 String name = io.getWord();
-                nameToid.put(name, i);
-                idToName.put(i, name);
+                dislikes.put(name, new HashSet<>());
+                names[i] = name;
             }
 
-            boolean[][] disLikes = new boolean[n][n];
             int m = io.getInt();
             for (int i = 0; i < m; i++) {
                 String name1 = io.getWord();
-                int id1 = nameToid.get(name1);
                 String name2 = io.getWord();
-                int id2 = nameToid.get(name2);
-                disLikes[id1][id2] = true;
-                disLikes[id2][id1] = true;
+                dislikes.get(name1).add(name2);
+                dislikes.get(name2).add(name1);
             }
 
-            Permuter permuter = new Permuter(idToName);
-            permuter.lineUp(n, disLikes);
-//            System.err.println(permuter.times);
-            if (permuter.bestSolution == null) {
-                io.println("You all need therapy.");
-            } else {
-                for (String name : permuter.bestSolution)
-                    io.print(name + " ");
-                io.println();
-            }
-
+            Permuter permuter = new Permuter(names, dislikes);
+            permuter.lineUp();
         }
         io.close();
     }
 
     private static class Permuter {
-        final Map<Integer, String> idToName;
         int times = 0;
-        String[] bestSolution = null;
+        public boolean foundSolution = false;
+        final String[] names;
+        final Map<String, Set<String>> dislikes;
 
-        public Permuter(Map<Integer, String> idToName) {
-            this.idToName = idToName;
+        public Permuter(String[] names, Map<String, Set<String>> dislikes) {
+            this.names = names;
+            this.dislikes = dislikes;
+            Arrays.sort(names);
         }
 
-        public void lineUp(int n, boolean[][] dislikes) {
-            int[] ids = new int[n];
-            for (int i = 0; i < n; i++) {
-                ids[i] = i;
-            }
-            permute(ids, 0, dislikes);
+        public void lineUp() {
+            permute(0);
+            System.err.println("times = " + times);
+            if (!foundSolution)
+                io.println("You all need therapy.");
         }
 
-        private void permute(int[] ids, int k, boolean[][] dislikes) {
-            if (k == ids.length) {
-//                System.err.println("ids " + Arrays.toString(ids));
-//                boolean correctSolution = correctSolution(ids, dislikes);
-//                System.err.println("correctSolution = " + correctSolution);
-//                assert correctSolution;
-//                System.err.println("names = " + Arrays.stream(ids).mapToObj(idToName::get).collect(Collectors.joining(" ")));
-                bestSolution = getNames(ids);
-//                updateSolutionIfBetter(ids);
+        private void permute(int k) {
+            if (foundSolution)
+                return;
+
+            if (k == names.length) {
+                foundSolution = true;
+                printSolution();
                 return;
             }
 
-//            if (!badBranch(ids, dislikes, k)) {
-//                for (int i = k; i < ids.length; i++) {
-//                    swap(ids, i, k);
-//                    permute(ids, k + 1, dislikes);
-//                    times++;
-//                    swap(ids, k, i);
-//                }
-//            }
-
-            for (int i = k; i < ids.length; i++) {
-                swap(ids, i, k);
-                if (!badBranch(ids, dislikes, k)) {
-                    permute(ids, k + 1, dislikes);
+            for (int i = k; i < names.length; i++) {
+                swap(names, i, k);
+                if (!badBranch(k)) {
+                    permute(k + 1);
                     times++;
                 }
-                swap(ids, k, i);
+                swap(names, k, i);
             }
         }
 
-        private boolean badBranch(int[] ids, boolean[][] dislikes, int k) {
-            for (int i = 0; i <= k; i++) {
-                if (i + 1 < ids.length && dislikes[ids[i]][ids[i + 1]]) {
+        private boolean badBranch(int k) {
+            for (int i = 0; i < k; i++) {
+                if (dislikes(names[i], names[i+1])) {
                     return true;
                 }
             }
-
-            if (bestSolution != null) {
-                String[] newSolution = getNames(ids);
-                for (int i = 0; i < k; i++) {
-                    if (newSolution[i].compareTo(bestSolution[i]) > 0) {
-                        return true;
-                    } else if (newSolution[i].compareTo(bestSolution[i]) < 0) {
-                        break;
-                    }
-                }
-            }
-
-//            if ((k > 0 && dislikes[ids[k - 1]][ids[k]])) {
-//                return true;
-//            }
-//            for (int i = 0; i < k; i++) {
-//                if (dislikes[ids[i]][ids[k]]) {
-//                    return true;
-//                }
-//            }
             return false;
         }
 
-        private void updateSolutionIfBetter(int[] ids) {
-            String[] newSolution = getNames(ids);
-            if (bestSolution == null) {
-                bestSolution = newSolution;
-            } else {
-                for (int i = 0; i < newSolution.length; i++) {
-                    if (newSolution[i].compareTo(bestSolution[i]) > 0) {
-                        break;
-                    } else if (newSolution[i].compareTo(bestSolution[i]) < 0) {
-                        bestSolution = newSolution;
-                        break;
-                    }
-                }
-            }
-        }
-
-        private String[] getNames(int[] ids) {
-            String[] newSolution = new String[ids.length];
-            for (int i = 0; i < ids.length; i++) {
-                newSolution[i] = idToName.get(ids[i]);
-            }
-            return newSolution;
-        }
-
-        private boolean correctSolution(int[] ids, boolean[][] dislikes) {
-            //TODO Check for out of bounds
-            for (int i = 0; i < ids.length - 1; i++) {
-                int id1 = ids[i];
-                int id2 = ids[i + 1];
-                if (dislikes[id1][id2])
+        private boolean correctSolution() {
+            for (int i = 0; i < names.length - 1; i++) {
+                if (dislikes(names[i], names[i + 1])) {
                     return false;
+                }
             }
             return true;
         }
 
-        private void swap(int[] nums, int i, int j) {
-            int tmp = nums[i];
-            nums[i] = nums[j];
-            nums[j] = tmp;
+        private void printSolution() {
+            for (String name : names)
+                io.print(name + " ");
+            io.println();
+        }
+
+        private boolean dislikes(String name1, String name2) {
+            return dislikes.get(name1).contains(name2);
+        }
+
+        private void swap(String[] names, int i, int j) {
+            String tmp = names[i];
+            names[i] = names[j];
+            names[j] = tmp;
         }
     }
 }
