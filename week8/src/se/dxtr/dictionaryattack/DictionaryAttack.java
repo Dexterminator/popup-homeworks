@@ -63,24 +63,22 @@ public class DictionaryAttack {
         return String.valueOf(pw);
     }
 
-    private static int getExchangeDigitDistance(char[] pw, char[] dw, int w1len, int w2len) {
+    private static int getExchangeDigitDistance(char[] pw, char[] dw, int pwLen, int dwLen) {
         int digitExchangeCost = Integer.MAX_VALUE;
-        char pwChar = pw[w1len - 1];
-        char dwChar = dw[w2len - 1];
+        char pwChar = pw[pwLen - 1];
+        char dwChar = dw[dwLen - 1];
         if (pwChar == dwChar) {
             digitExchangeCost = 0;
         } else if (Character.isDigit(pwChar)) {
             digitExchangeCost = 1;
         }
 
-        int exchangeDigit;
-        int dist = partDist(pw, dw, w1len - 1, w2len - 1);
+        int dist = partDist(pw, dw, pwLen - 1, dwLen - 1);
         if (dist == Integer.MAX_VALUE || digitExchangeCost == Integer.MAX_VALUE) {
-            exchangeDigit = Integer.MAX_VALUE;
+            return Integer.MAX_VALUE;
         } else {
-            exchangeDigit = dist + digitExchangeCost;
+            return dist + digitExchangeCost;
         }
-        return exchangeDigit;
     }
 
     static int distance(String w1, String w2) {
@@ -88,5 +86,4 @@ public class DictionaryAttack {
             return Integer.MAX_VALUE;
         return partDist(w1.toCharArray(), w2.toCharArray(), w1.length(), w2.length());
     }
-
 }
