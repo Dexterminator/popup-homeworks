@@ -27,11 +27,10 @@ public class EvilStraw {
         Map<Character, Integer> letterCounts = new HashMap<>();
         for (int i = 0; i < word.length; i++)
             letterCounts.merge(word[i], 1, (a, b) -> a + b);
-        if (word.length % 2 == 0) {
+        
+        if (word.length % 2 == 0)
             return transformationPossibleEvenLength(letterCounts);
-        } else {
-            return transformationPossibleOddLength(letterCounts);
-        }
+        return transformationPossibleOddLength(letterCounts);
     }
 
     private static boolean transformationPossibleEvenLength(Map<Character, Integer> letterCounts) {
