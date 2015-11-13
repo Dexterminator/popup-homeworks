@@ -24,36 +24,55 @@ public class DictionaryAttack {
     }
 
     private static boolean acceptable(String password, String[] dictionaryWords) {
+        int digitCount = countDigits(password);
+
+        if (digitCount > 3)
+            return true;
+
         for (String dictionaryWord : dictionaryWords) {
-            int distance = distance(password, dictionaryWord);
-            if (distance <= 3) {
+            if (password.length() != dictionaryWord.length())
+                continue;
+            int transpositionCount = countTranspositions(password.toCharArray(), dictionaryWord.toCharArray(), 0);
+            if (transpositionCount == Integer.MAX_VALUE)
+                continue;
+            if (transpositionCount + digitCount <= 3)
                 return false;
-            }
         }
+
         return true;
     }
 
-    static int partDist(char[] pw, char[] dw, int pwLen, int dwLen) {
-        if (pwLen == 0)
-            return dwLen;
-        if (dwLen == 0)
-            return pwLen;
-        int exchangeDigitDistance = getExchangeDigitDistance(pw, dw, pwLen, dwLen);
-        int transposeDistance = getTransposeDistance(pw, dw, pwLen, dwLen);
-        return Math.min(exchangeDigitDistance, transposeDistance);
-    }
+    private static int countTranspositions(char[] pw, char[] dw, int count) {
+        if (essentiallyEqual(pw, dw))
+            return count;
+        if (count > 3)
+            return Integer.MAX_VALUE;
 
-    private static int getTransposeDistance(char[] pw, char[] dw, int pwLen, int dwLen) {
-        int transposeDistance = Integer.MAX_VALUE;
-        if (pwLen > 1) {
-            char[] pwCpy = Arrays.copyOf(pw, pw.length);
-            swap(pwCpy, pwLen - 1, pwLen - 2);
-            transposeDistance = partDist(pwCpy, dw, pwLen - 1, dwLen - 1);
-            if (transposeDistance != Integer.MAX_VALUE)
-                transposeDistance += 1;
+        int transpositionCount = Integer.MAX_VALUE;
+        for (int i = 0; i < pw.length - 1; i++) {
+            swap(pw, i, i + 1);
+            transpositionCount = Math.min(transpositionCount, countTranspositions(pw, dw, count + 1));
+            swap(pw, i, i + 1);
         }
 
-        return transposeDistance;
+        return transpositionCount;
+    }
+
+    private static int countDigits(String dictionaryWord) {
+        int count = 0;
+        for (int i = 0; i < dictionaryWord.length(); i++) {
+            if (Character.isDigit(dictionaryWord.charAt(i)))
+                count++;
+        }
+        return count;
+    }
+
+    private static boolean essentiallyEqual(char[] pw, char[] dw) {
+        for (int i = 0; i < pw.length; i++) {
+            if (pw[i] != dw[i] && !Character.isDigit(pw[i]))
+                return false;
+        }
+        return true;
     }
 
     private static String swap(char[] pw, int i, int j) {
@@ -63,27 +82,4 @@ public class DictionaryAttack {
         return String.valueOf(pw);
     }
 
-    private static int getExchangeDigitDistance(char[] pw, char[] dw, int pwLen, int dwLen) {
-        int digitExchangeCost = Integer.MAX_VALUE;
-        char pwChar = pw[pwLen - 1];
-        char dwChar = dw[dwLen - 1];
-        if (pwChar == dwChar) {
-            digitExchangeCost = 0;
-        } else if (Character.isDigit(pwChar)) {
-            digitExchangeCost = 1;
-        }
-
-        int dist = partDist(pw, dw, pwLen - 1, dwLen - 1);
-        if (dist == Integer.MAX_VALUE || digitExchangeCost == Integer.MAX_VALUE) {
-            return Integer.MAX_VALUE;
-        } else {
-            return dist + digitExchangeCost;
-        }
-    }
-
-    static int distance(String w1, String w2) {
-        if (w1.length() != w2.length())
-            return Integer.MAX_VALUE;
-        return partDist(w1.toCharArray(), w2.toCharArray(), w1.length(), w2.length());
-    }
 }
