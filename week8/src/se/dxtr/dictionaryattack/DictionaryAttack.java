@@ -1,7 +1,5 @@
 package se.dxtr.dictionaryattack;
 
-import java.util.Arrays;
-
 /**
  * Created by dexter on 11/11/15.
  */
