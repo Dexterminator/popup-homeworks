@@ -1,8 +1,5 @@
 package se.dxtr.factovisors;
 
-/**
- * Created by dexter on 19/11/15.
- */
 public class Factovisors {
 
     static Kattio io = new Kattio();
