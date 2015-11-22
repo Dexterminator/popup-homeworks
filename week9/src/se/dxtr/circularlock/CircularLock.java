@@ -32,7 +32,7 @@ public class CircularLock {
 
     private static boolean unlockable(int[][] state, int[][] period) {
         int p = Arrays.stream(period)
-                .flatMapToInt(row -> Arrays.stream(row))
+                .flatMapToInt(Arrays::stream)
                 .reduce(CircularLock::gcd)
                 .getAsInt();
         int[][] statePrimes = new int[2][2];
