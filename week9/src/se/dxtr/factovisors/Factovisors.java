@@ -1,11 +1,13 @@
 package se.dxtr.factovisors;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 public class Factovisors {
 
     static Kattio io = new Kattio();
+    static BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
 
     public static void main(String[] args) {
         while (io.hasMoreTokens()) {
@@ -23,6 +25,10 @@ public class Factovisors {
     }
 
     private static boolean dividesFactorial(int n, int m) {
+        if (m == 0)
+            return false;
+        if (n == 0)
+            n = 1;
         Map<Integer, Integer> primeFactors = primeFactors(m);
         for (int factor : primeFactors.keySet()) {
             int factorPower = primeFactors.get(factor);
@@ -42,15 +48,16 @@ public class Factovisors {
     }
 
     private static Map<Integer, Integer> primeFactors(int n) {
-        Map<Integer, Integer> factorPowers = new LinkedHashMap<>();
+        Map<Integer, Integer> factorPowers = new HashMap<>();
         for (int i = 2; i <= n / i; i++) {
             while (n % i == 0) {
-                factorPowers.merge(i, 1, (a, b) -> a + b);
+                factorPowers.merge(i, 1, add);
                 n /= i;
             }
         }
+
         if (n > 1)
-            factorPowers.merge(n, 1, (a, b) -> a + b);
+            factorPowers.merge(n, 1, add);
         return factorPowers;
     }
 }
