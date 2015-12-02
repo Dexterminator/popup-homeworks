@@ -54,7 +54,7 @@ public class Trilemma {
     }
 
     private static double area(double side1, double side2, double side3) {
-        double s = (side1 + side2 + side3) / 2.0d;
+        double s = (side1 + side2 + side3) / 2.0;
         double x = (s * (s - side1) * (s - side2) * (s - side3));
         return Math.sqrt(x);
     }
