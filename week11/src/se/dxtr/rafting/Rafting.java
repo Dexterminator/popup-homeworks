@@ -2,7 +2,6 @@ package se.dxtr.rafting;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.text.DecimalFormat;
 
 public class Rafting {
 
@@ -22,17 +21,15 @@ public class Rafting {
             fillPolygon(outerCount, outerPoints, outerSegments);
 
             double smallest = Double.MAX_VALUE;
-            for (int j = 0; j < innerPoints.length; j++) {
-                for (int k = 0; k < outerSegments.length; k++) {
-                    double distance = outerSegments[k].ptSegDist(innerPoints[j]);
-                    smallest = Math.min(smallest, distance);
+            for (Point2D.Double innerPoint : innerPoints) {
+                for (Line2D.Double outerSegment : outerSegments) {
+                    smallest = Math.min(smallest, outerSegment.ptSegDist(innerPoint));
                 }
             }
 
-            for (int j = 0; j < outerPoints.length; j++) {
-                for (int k = 0; k < innerSegments.length; k++) {
-                    double distance = innerSegments[k].ptSegDist(outerPoints[j]);
-                    smallest = Math.min(smallest, distance);
+            for (Point2D.Double outerPoint : outerPoints) {
+                for (Line2D.Double innerSegment : innerSegments) {
+                    smallest = Math.min(smallest, innerSegment.ptSegDist(outerPoint));
                 }
             }
 
