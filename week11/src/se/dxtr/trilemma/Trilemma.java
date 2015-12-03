@@ -4,7 +4,7 @@ import java.awt.geom.Point2D;
 
 public class Trilemma {
     static Kattio io = new Kattio();
-    static final double EPSILON = 1e-10;
+    static final double EPSILON = 1e-2;
 
     public static void main(String[] args) {
         int n = io.getInt();
@@ -25,7 +25,7 @@ public class Trilemma {
         double side2 = distance(x2, y2, x3, y3);
         double side3 = distance(x3, y3, x1, y1);
 
-        if (equals(area(side1, side2, side3), 0)) {
+        if (area(side1, side2, side3) <= EPSILON) {
             io.println("Case #" + i + ": not a triangle");
             return;
         }
@@ -40,17 +40,18 @@ public class Trilemma {
     }
 
     private static String findAngleType(double angle1, double angle2, double angle3) {
-        if (equals(angle1, 90.0) || equals(angle2, 90.0) || equals(angle3, 90.0))
+        double biggestAngle = Math.max(angle1, Math.max(angle2, angle3));
+        if (equals(biggestAngle, 90.0))
             return "right";
-        if (angle1 > 90.0 || angle2 > 90.0 || angle3 > 90.0)
+        if (biggestAngle > 90.0)
             return "obtuse";
         return "acute";
     }
 
     private static String findSideType(double side1, double side2, double side3) {
-        if (!equals(side1, side2) && !equals(side1, side3) && !equals(side2, side3))
-            return "scalene";
-        return "isosceles";
+        if (equals(side1, side2) || equals(side2, side3) || equals(side1, side3))
+            return "isosceles";
+        return "scalene";
     }
 
     private static double area(double side1, double side2, double side3) {
