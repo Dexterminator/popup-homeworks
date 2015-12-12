@@ -1,8 +1,5 @@
 package se.dxtr.matchsticks;
 
-/**
- * Created by dexter on 12/12/15.
- */
 public class Matchsticks {
 
     static Kattio io = new Kattio();
