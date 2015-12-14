@@ -1,15 +1,12 @@
 package se.dxtr.quantum;
 
-import java.util.BitSet;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Quantum {
 
     static Kattio io = new Kattio();
     static Graph<Weight> graph;
-    static Set<BitSet> handled = new HashSet<>();
+    static Set<BitSet> visited = new HashSet<>();
     public static final long INFINITY = Long.MAX_VALUE;
 
     public static void main(String[] args) {
@@ -52,8 +49,8 @@ public class Quantum {
     }
 
     private static void solve(Operation[] operations, BitSet[] fromWords, BitSet[] toWords) {
+        visited.clear();
         graph = new Graph<>();
-        handled.clear();
         for (int i = 0; i < fromWords.length; i++) {
             BitSet fromWord = fromWords[i];
             BitSet toWord = toWords[i];
@@ -73,20 +70,43 @@ public class Quantum {
     }
 
     private static void fillGraph(BitSet fromWord, Operation[] operations) {
-        if (!handled.contains(fromWord)) {
-            if (!graph.containsWord(fromWord))
-                graph.addVertex(new Vertex<>(fromWord));
+        if (visited.contains(fromWord))
+            return;
+        Queue<BitSet> q = new LinkedList<>();
+        q.add(fromWord);
+        visited.add(fromWord);
+        if (!graph.containsWord(fromWord))
+            graph.addVertex(new Vertex<>(fromWord));
+        while (!q.isEmpty()) {
+            BitSet current = q.poll();
             for (Operation operation : operations) {
-                BitSet neighbor = performOperation(fromWord, operation.operation);
-                if (!graph.containsWord(neighbor))
-                    graph.addVertex(new Vertex<>(neighbor));
-                graph.addDirectedEdge(fromWord, neighbor, new Weight(operation.cost));
-            }
-            handled.add(fromWord);
-            for (Edge<Weight> edge : graph.getVertices().get(fromWord).getEdges()) {
-                fillGraph(edge.getTo().getId(), operations);
+                BitSet neighbor = performOperation(current, operation.operation);
+                if (!visited.contains(neighbor)) {
+                    if (!graph.containsWord(neighbor))
+                        graph.addVertex(new Vertex<>(neighbor));
+                    graph.addDirectedEdge(current, neighbor, new Weight(operation.cost));
+                    q.add(neighbor);
+                    visited.add(neighbor);
+                }
             }
         }
+
+//        if (!handled.contains(fromWord)) {
+//            if (!graph.containsWord(fromWord))
+//                graph.addVertex(new Vertex<>(fromWord));
+//            for (Operation operation : operations) {
+//                BitSet neighbor = performOperation(fromWord, operation.operation);
+//                if (!graph.containsWord(neighbor))
+//                    graph.addVertex(new Vertex<>(neighbor));
+//                graph.addDirectedEdge(fromWord, neighbor, new Weight(operation.cost));
+//            }
+//            handled.add(fromWord);
+//            for (Edge<Weight> edge : graph.getVertices().get(fromWord).getEdges()) {
+//                if (!handled.contains(edge.getTo().getId())) {
+//                    fillGraph(edge.getTo().getId(), operations);
+//                }
+//            }
+//        }
     }
 
     private static BitSet performOperation(BitSet word, String operation) {
